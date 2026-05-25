@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Shop 運用代行 | サービス詳細 | ARI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f0eb;
+      --tiktok-red: #fe2c55;
+      --tiktok-cyan: #25f4ee;
+      --tiktok-yellow: #ffdd00;
+      --gray: #1a1a1a;
+      --mid-gray: #2e2e2e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Noto Sans JP', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    .cursor {
+      width: 16px; height: 16px;
+      background: var(--tiktok-red);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, background 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor-trail {
+      width: 40px; height: 40px;
+      border: 1px solid var(--tiktok-cyan);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.15s ease;
+      mix-blend-mode: difference;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+    .logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--white);
+    }
+    .logo span.red { color: var(--tiktok-red); }
+    .logo span.cyan { color: var(--tiktok-cyan); }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--white);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .nav-back:hover { opacity: 1; color: var(--tiktok-cyan); }
+    .nav-back::before { content: '←'; margin-right: 4px; }
+
+    /* HERO */
+    .page-hero {
+      padding: 160px 48px 80px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top right, rgba(254,44,85,0.12) 0%, transparent 60%);
+    }
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(254,44,85,0.15);
+      border: 1px solid rgba(254,44,85,0.4);
+      color: var(--tiktok-red);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+    .hero-tag::before { content: '▶'; font-size: 10px; }
+    .page-hero h1 {
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
+    .page-hero h1 .accent { color: var(--tiktok-red); }
+    .page-hero-lead {
+      font-size: 17px;
+      line-height: 1.9;
+      opacity: 0.75;
+      max-width: 600px;
+    }
+
+    /* CONTENT */
+    .content-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 48px 120px;
+    }
+
+    .intro-block {
+      background: var(--gray);
+      border-left: 3px solid var(--tiktok-red);
+      padding: 36px 40px;
+      margin-bottom: 64px;
+      border-radius: 0 4px 4px 0;
+    }
+    .intro-block p {
+      font-size: 16px;
+      line-height: 2.0;
+      opacity: 0.85;
+    }
+
+    /* SECTION */
+    .detail-section {
+      margin-bottom: 60px;
+    }
+    .detail-section-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--tiktok-cyan);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .detail-section-title::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--tiktok-cyan);
+    }
+
+    .service-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+
+    .service-item {
+      background: var(--gray);
+      padding: 28px 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: background 0.3s;
+    }
+    .service-item:hover { background: var(--mid-gray); }
+    .service-item-dot {
+      width: 8px; height: 8px;
+      background: var(--tiktok-red);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .service-item span {
+      font-size: 14px;
+      line-height: 1.7;
+      opacity: 0.85;
+    }
+
+    .service-item-full {
+      background: var(--gray);
+      padding: 28px 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: background 0.3s;
+      grid-column: 1 / -1;
+    }
+    .service-item-full:hover { background: var(--mid-gray); }
+
+    /* METRICS ROW */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-bottom: 60px;
+    }
+    .metric-mini {
+      background: var(--gray);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-mini::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--tiktok-cyan), transparent);
+    }
+    .metric-mini-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--tiktok-cyan);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .metric-mini-label {
+      font-size: 12px;
+      opacity: 0.5;
+      letter-spacing: 0.5px;
+    }
+
+    /* NOTICE */
+    .notice-block {
+      background: rgba(254,44,85,0.06);
+      border: 1px solid rgba(254,44,85,0.2);
+      border-radius: 4px;
+      padding: 36px 40px;
+      margin-bottom: 60px;
+    }
+    .notice-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--tiktok-red);
+      margin-bottom: 20px;
+    }
+    .notice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .notice-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      opacity: 0.8;
+    }
+    .notice-item::before {
+      content: '◼';
+      color: var(--tiktok-red);
+      font-size: 8px;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    /* CTA */
+    .cta-block {
+      text-align: center;
+      padding: 60px 40px;
+      background: var(--gray);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(254,44,85,0.08) 0%, transparent 70%);
+    }
+    .cta-block h3 {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .cta-block p {
+      font-size: 14px;
+      opacity: 0.6;
+      margin-bottom: 32px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--tiktok-red);
+      color: #fff;
+      padding: 16px 40px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-decoration: none;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--tiktok-cyan);
+      transform: translateX(-105%);
+      transition: transform 0.3s ease;
+    }
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary:hover { color: var(--black); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(254,44,85,0.4); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .page-hero { padding: 120px 24px 60px; }
+      .content-wrap { padding: 48px 24px 80px; }
+      .service-content-grid { grid-template-columns: 1fr; }
+      .metrics-row { grid-template-columns: 1fr 1fr; }
+      .intro-block { padding: 24px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-trail" id="cursor-trail"></div>
+
+  <nav>
+    <a href="index.html" class="logo">
+      <span class="red">TT</span><span class="cyan">Shop</span>&nbsp;ARI
+    </a>
+    <a href="index.html" class="nav-back">トップに戻る</a>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="hero-tag">サービス詳細</div>
+      <h1>TikTok Shop<br><span class="accent">運用代行</span></h1>
+      <p class="page-hero-lead">
+        TikTok ShopでSEO1位・商品販売経験あり、TikTok GOで収益化達成済みの当方が、TikTok Shopを運用代行します。
+      </p>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+
+    <div class="intro-block reveal">
+      <p>
+        企業に頼むと高い…安く運用代行したい！試しに始めてみたい！<br>
+        そんなあなたにピッタリのサービスです。
+      </p>
+    </div>
+
+    <!-- 実績 -->
+    <div class="detail-section reveal">
+      <div class="detail-section-title">実績</div>
+      <div class="metrics-row">
+        <div class="metric-mini">
+          <div class="metric-mini-num">2800%↑</div>
+          <div class="metric-mini-label">GMV向上実績</div>
+        </div>
+        <div class="metric-mini">
+          <div class="metric-mini-num">SEO 1位</div>
+          <div class="metric-mini-label">検索順位獲得</div>
+        </div>
+        <div class="metric-mini">
+          <div class="metric-mini-num">4万PV</div>
+          <div class="metric-mini-label">PR動画再生数</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- サービス内容 -->
+    <div class="detail-section reveal">
+      <div class="detail-section-title">サービス内容</div>
+      <div class="service-content-grid">
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>運用ジャンル選定</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>企画・台本作成</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>簡単な動画編集（※外注へ依頼あり）</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>投稿代行</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>インサイト分析</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>商品コンテンツ選択</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span>キャンペーン・プロモート作成 etc.</span>
+        </div>
+        <div class="service-item">
+          <div class="service-item-dot"></div>
+          <span style="opacity:0.6;">※プロモート等ご希望の場合は別途料金</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 運用代行内容 -->
+    <div class="detail-section reveal">
+      <div class="detail-section-title">運用代行内容</div>
+      <div class="service-content-grid">
+        <div class="service-item service-item-full">
+          <div class="service-item-dot"></div>
+          <span>月8本の動画作成 ＋ TikTok Shop 運営</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 購入時のお願い -->
+    <div class="detail-section reveal">
+      <div class="detail-section-title">ご購入前にお読みください</div>
+      <div class="notice-block">
+        <div class="notice-title">購入時のお願い</div>
+        <div class="notice-list">
+          <div class="notice-item">
+            私自身もまだ運用に探り探りの所があり、サービス運営の中でTikTok Shop運用のスキルを磨いていきたいと思っております。プロレベルの運用代行を期待している人は購入をオススメしません。アマチュアレベルでも良いよと納得された方だけご購入ください。
+          </div>
+          <div class="notice-item">
+            BAN、シャドウバンなどが万が一起きている際には、一時投稿を止める場合があることをご了承ください。またBANなどのリスクについてもご理解の上ご購入いただけますようお願い申し上げます。
+          </div>
+          <div class="notice-item">
+            TikTokの規約違反、違反内容に関しては対応できかねますのでご了承ください。
+          </div>
+          <div class="notice-item">
+            長期間ご連絡がつかない場合、正式な納品として終了させていただく場合があります。
+          </div>
+          <div class="notice-item">
+            お客様とSNS運営側のトラブルに関しては一切責任を負いかねます。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-block reveal">
+      <h3>サービスを購入する</h3>
+      <p>ご不明点はお気軽にメールにてお問い合わせください。</p>
+      <a href="https://tiktokshop-ari.stores.jp/items/69662ee85f2118485d380ff3" class="btn-primary" target="_blank">
+        <span>STORES で購入する →</span>
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const trail = document.getElementById('cursor-trail');
+    let mx = 0, my = 0, tx = 0, ty = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+    function animateTrail() {
+      tx += (mx - tx) * 0.12;
+      ty += (my - ty) * 0.12;
+      trail.style.left = tx + 'px';
+      trail.style.top = ty + 'px';
+      requestAnimationFrame(animateTrail);
+    }
+    animateTrail();
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
